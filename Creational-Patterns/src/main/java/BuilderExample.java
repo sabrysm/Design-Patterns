@@ -25,12 +25,18 @@ public class BuilderExample {
         Ensure thread safety for the Pizza object if needed.
 * */
     public static void main(String[] args) {
-        Pizza pizza = new Pizza.PizzaBuilder(3)
-                .setBacon(true)
-                .setCheese(true)
-                .setExtraToppings(List.of("Pineapple", "Onions", "Tomatoes"))
-                .build();
-        System.out.println(pizza);
+        Pizza.PizzaBuilder pizzaBuilder = new Pizza.PizzaBuilder(3);
+        PizzaDirector pizzaDirector = new PizzaDirector(pizzaBuilder);
+
+        Pizza defaultPizza = pizzaDirector.makeDefaultPizza();
+        Pizza pepperoniWithBaconPizza = pizzaDirector.makePepperoniWithBaconPizza();
+        Pizza cheeseWithBaconPizza = pizzaDirector.makeCheeseWithBaconPizza();
+        Pizza pineapplePizza = pizzaDirector.makePineapplePizza();
+
+        System.out.println(defaultPizza);
+        System.out.println(pepperoniWithBaconPizza);
+        System.out.println(cheeseWithBaconPizza);
+        System.out.println(pineapplePizza);
     }
 }
 
@@ -58,6 +64,10 @@ class Pizza {
 
         public PizzaBuilder(int size) {
             this.size = size;
+        }
+
+        public int getSize() {
+            return size;
         }
 
         public PizzaBuilder setCheese(boolean cheese) {
@@ -92,9 +102,32 @@ class Pizza {
                 "Pepperoni", pepperoni,
                 "Bacon", bacon
         );
-        return "Pizza of size " + size + " and " +
-                pizzaMainToppings.entrySet().stream().filter(topping -> topping.getValue()).map(Map.Entry::getKey).collect(Collectors.joining(" and ")) +
-                "\n" + (extraToppings != null? extraToppings.stream().map(topping -> topping).collect(Collectors.joining(", "))
-                : " that's all");
+        return "Pizza of size " + size + (pizzaMainToppings.entrySet().stream().filter(Map.Entry::getValue).toList().isEmpty()? "" : " and ") +
+                pizzaMainToppings.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).collect(Collectors.joining(" and ")) +
+                (extraToppings == null? "" : " and " + extraToppings.stream().map(topping -> topping).collect(Collectors.joining(", ")));
+    }
+}
+
+class PizzaDirector {
+    private final Pizza.PizzaBuilder builder;
+
+    public PizzaDirector(Pizza.PizzaBuilder builder) {
+        this.builder = builder;
+    }
+
+    public Pizza makeDefaultPizza() {
+        return new Pizza.PizzaBuilder(builder.getSize()).setCheese(true).build();
+    }
+
+    public Pizza makePepperoniWithBaconPizza() {
+        return new Pizza.PizzaBuilder(builder.getSize()).setPepperoni(true).setBacon(true).build();
+    }
+
+    public Pizza makeCheeseWithBaconPizza() {
+        return new Pizza.PizzaBuilder(builder.getSize()).setCheese(true).setBacon(true).build();
+    }
+
+    public Pizza makePineapplePizza() {
+        return new Pizza.PizzaBuilder(builder.getSize()).setExtraToppings(List.of("pineapple")).build();
     }
 }
