@@ -32,22 +32,26 @@ public class PrototypeExample {
         Cloned Rectangle: width=20, height=15, color=Yellow
     * */
     public static void main(String[] args) {
-        Map<String, Shape> mapper = new HashMap<>();
-        mapper.put("Rectangle", new Rectangle(10,15, "Green"));
-        mapper.put("Circle", new Circle(5, "Red"));
+        Map<String, Shape> shapeRegistry = new HashMap<>();
+        shapeRegistry.put("Rectangle", new Rectangle(10,15, "Green"));
+        shapeRegistry.put("Circle", new Circle(5, "Red"));
 
-        Circle clonedCircle = (Circle) mapper.get("Circle").clone();
-        Rectangle cloneRectangle = (Rectangle) mapper.get("Rectangle").clone();
+        Shape clonedCircle = shapeRegistry.get("Circle").clone();
+        Shape clonedRectangle = shapeRegistry.get("Rectangle").clone();
 
-        clonedCircle.setColor("Blue");
+        if (clonedCircle instanceof Circle circle) {
+            circle.setColor("Blue");
+        }
 
-        cloneRectangle.setWidth(20);
-        cloneRectangle.setColor("Yellow");
+        if (clonedRectangle instanceof Rectangle rectangle) {
+            rectangle.setWidth(20);
+            rectangle.setColor("Yellow");
+        }
 
-        System.out.printf("Original %s", mapper.get("Circle"));
+        System.out.printf("Original %s", shapeRegistry.get("Circle"));
         System.out.printf("Cloned %s", clonedCircle);
-        System.out.printf("Original %s", mapper.get("Rectangle"));
-        System.out.printf("Cloned %s", cloneRectangle);
+        System.out.printf("Original %s", shapeRegistry.get("Rectangle"));
+        System.out.printf("Cloned %s", clonedRectangle);
     }
 }
 
